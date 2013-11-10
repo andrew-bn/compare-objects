@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>CompareObjects</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <title>.NET Objects Comparer</title>
         <authors>Kellerman Software; Andrey Bulygin</authors>
         <licenseUrl>https://comparenetobjects.codeplex.com/license</licenseUrl>

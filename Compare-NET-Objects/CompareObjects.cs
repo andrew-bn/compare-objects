@@ -1152,7 +1152,12 @@ namespace KellermanSoftware.CompareNetObjects
 
         private bool ObjectIsTracedAlready(object obj)
         {
-            return _parents.Contains(obj);
+	        foreach (var item in _parents)
+	        {
+		        if (ReferenceEquals(item, obj))
+			        return true;
+	        }
+	        return false;
         }
 
         /// <summary>
@@ -2170,14 +2175,23 @@ namespace KellermanSoftware.CompareNetObjects
 
         private void AddParent(object obj)
         {
-            if (obj!=null && IsClass(obj.GetType()) && !_parents.Contains(obj))
+            if (obj!=null && IsClass(obj.GetType()) && !ObjectIsTracedAlready(obj))
                 _parents.Add(obj);
         }
 
         private void RemoveParent(object obj)
         {
-            if (_parents.Contains(obj))
-                _parents.Remove(obj);
+            if (ObjectIsTracedAlready(obj))
+            {
+	            for (int i = 0; i < _parents.Count; i++)
+	            {
+		            if (ReferenceEquals(_parents[i], obj))
+		            {
+			            _parents.RemoveAt(i);
+			            break;
+		            }
+	            }
+            }
         }
 
         /// <summary>
