@@ -2429,5 +2429,6 @@ namespace KellermanSoftware.CompareNetObjectsTests
             Assert.IsFalse(condition);
         }
         #endregion
+
     }
 }

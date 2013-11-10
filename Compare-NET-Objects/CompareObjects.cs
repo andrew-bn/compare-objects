@@ -104,7 +104,7 @@ namespace KellermanSoftware.CompareNetObjects
         /// <summary>
         /// Keep track of parent objects in the object hiearchy
         /// </summary>
-        private readonly Dictionary<int, int> _parents = new Dictionary<int,int>();
+        private readonly List<object> _parents = new List<object>();
 
         /// <summary>
         /// Reflection Cache for property info
@@ -1081,8 +1081,8 @@ namespace KellermanSoftware.CompareNetObjects
         {
             try
             {               
-                AddParent(object1.GetHashCode());
-                AddParent(object2.GetHashCode());
+                AddParent(object1);
+                AddParent(object2);
 
                 Type t1 = object1.GetType();
 
@@ -1091,8 +1091,8 @@ namespace KellermanSoftware.CompareNetObjects
             }
             finally
             {
-                RemoveParent(object1.GetHashCode());
-                RemoveParent(object2.GetHashCode());
+                RemoveParent(object1);
+                RemoveParent(object2);
             }
         }
 
@@ -1114,8 +1114,8 @@ namespace KellermanSoftware.CompareNetObjects
                     return;
                 }
 
-                AddParent(object1.GetHashCode());
-                AddParent(object2.GetHashCode());
+                AddParent(object1);
+                AddParent(object2);
 
                 Type t1 = object1.GetType();
                 
@@ -1137,8 +1137,8 @@ namespace KellermanSoftware.CompareNetObjects
             }
             finally
             {
-                RemoveParent(object1.GetHashCode());
-                RemoveParent(object2.GetHashCode());
+                RemoveParent(object1);
+                RemoveParent(object2);
             }
         }
 
@@ -1148,6 +1148,11 @@ namespace KellermanSoftware.CompareNetObjects
             {
                 CustomComparer(this, object1, object2, breadCrumb);
             }
+        }
+
+        private bool ObjectIsTracedAlready(object obj)
+        {
+            return _parents.Contains(obj);
         }
 
         /// <summary>
@@ -1187,8 +1192,8 @@ namespace KellermanSoftware.CompareNetObjects
                 object objectValue1 = item.GetValue(object1);
                 object objectValue2 = item.GetValue(object2);
 
-                bool object1IsParent = objectValue1 != null && (objectValue1 == object1 || _parents.ContainsKey(objectValue1.GetHashCode()));
-                bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || _parents.ContainsKey(objectValue2.GetHashCode()));
+                bool object1IsParent = objectValue1 != null && (objectValue1 == object1 || ObjectIsTracedAlready(objectValue1));
+                bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || ObjectIsTracedAlready(objectValue2));
 
                 //Skip fields that point to the parent
                 if (IsClass(item.FieldType)
@@ -1324,8 +1329,8 @@ namespace KellermanSoftware.CompareNetObjects
                     continue;
                 }
 
-                bool object1IsParent = objectValue1 != null && (objectValue1 == object1 || _parents.ContainsKey(objectValue1.GetHashCode()));
-                bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || _parents.ContainsKey(objectValue2.GetHashCode()));
+                bool object1IsParent = objectValue1 != null && (objectValue1 == object1 || ObjectIsTracedAlready(objectValue1));
+                bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || ObjectIsTracedAlready(objectValue2));
 
                 //Skip properties where both point to the corresponding parent
                 if ((IsClass(info.PropertyType) || IsStruct(info.PropertyType)) && (object1IsParent && object2IsParent))
@@ -1638,8 +1643,8 @@ namespace KellermanSoftware.CompareNetObjects
 
             try
             {               
-                AddParent(object1.GetHashCode());
-                AddParent(object2.GetHashCode());
+                AddParent(object1);
+                AddParent(object2);
 
                 //Objects must be the same length
                 if (iDict1.Count != iDict2.Count)
@@ -1695,8 +1700,8 @@ namespace KellermanSoftware.CompareNetObjects
             }
             finally
             {
-                RemoveParent(object1.GetHashCode());
-                RemoveParent(object2.GetHashCode());
+                RemoveParent(object1);
+                RemoveParent(object2);
             }
         }
 
@@ -1773,8 +1778,8 @@ namespace KellermanSoftware.CompareNetObjects
             }
             finally
             {
-                RemoveParent(object1.GetHashCode());
-                RemoveParent(object2.GetHashCode());
+                RemoveParent(object1);
+                RemoveParent(object2);
             }
         }
 
@@ -1918,8 +1923,8 @@ namespace KellermanSoftware.CompareNetObjects
         {
             try
             {               
-                AddParent(object1.GetHashCode());
-                AddParent(object2.GetHashCode());
+                AddParent(object1);
+                AddParent(object2);
 
                 Type t1 = object1.GetType();
 
@@ -1979,8 +1984,8 @@ namespace KellermanSoftware.CompareNetObjects
             }
             finally
             {
-                RemoveParent(object1.GetHashCode());
-                RemoveParent(object2.GetHashCode());
+                RemoveParent(object1);
+                RemoveParent(object2);
             }
         }
         #endregion
@@ -2163,16 +2168,16 @@ namespace KellermanSoftware.CompareNetObjects
 
         #region Supporting Methods
 
-        private void AddParent(int hash)
+        private void AddParent(object obj)
         {
-            if (!_parents.ContainsKey(hash))
-                _parents.Add(hash,hash);
+            if (obj!=null && IsClass(obj.GetType()) && !_parents.Contains(obj))
+                _parents.Add(obj);
         }
 
-        private void RemoveParent(int hash)
+        private void RemoveParent(object obj)
         {
-            if (_parents.ContainsKey(hash))
-                _parents.Remove(hash);
+            if (_parents.Contains(obj))
+                _parents.Remove(obj);
         }
 
         /// <summary>

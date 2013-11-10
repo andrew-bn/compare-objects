@@ -22,7 +22,7 @@ namespace KellermanSoftware.CompareNetObjectsTests.TestClasses
             if (null == realObj)
                 return false;
 
-            return realObj.Description.Equals(this.Description);
+            return Equals(realObj.Description,Description);
 
         }
     }

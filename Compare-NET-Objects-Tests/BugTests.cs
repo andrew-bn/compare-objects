@@ -57,6 +57,35 @@ namespace KellermanSoftware.CompareNetObjectsTests
         #endregion
 
         #region Tests
+        public class MyClass
+        {
+            public string Prop { get; set; }
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != GetType()) return false;
+                return Equals((MyClass)obj);
+            }
+            protected bool Equals(MyClass other)
+            {
+                return string.Equals(Prop, other.Prop);
+            }
+
+            public override int GetHashCode()
+            {
+                return (Prop != null ? Prop.GetHashCode() : 0);
+            }
+        }
+
+        [Test]
+        public void HashCodeIssue()
+        {
+            var a = new MyClass { Prop = "value" };
+            var b = new MyClass { Prop = "eulav" };
+            var c = new CompareObjects();
+            Assert.IsFalse(c.Compare(a, b));
+        }
 
         [Test]
         public void ComparerIgnoreOrderTest()
