@@ -2,7 +2,7 @@ Fork of Compare .NET Objects (https://comparenetobjects.codeplex.com/)
 
 You can install it via NuGet:
 
-![Install-Pacakage CompareObjects](https://raw.github.com/andrew-bn/compare-objects/master/nuget/nuget.png)
+![Install-Pacakage CompareObjects](https://raw.github.com/andrew-bn/compare-objects/master/NuGet/nuget.png)
 
 
 Original ReadMe:
